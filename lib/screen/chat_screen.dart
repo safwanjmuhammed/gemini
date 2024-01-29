@@ -10,6 +10,7 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final chatController = TextEditingController();
+  String chatText = '';
   String geminiText = '';
   bool isTextEmpty = false;
   bool isGenerating = false;
@@ -35,8 +36,8 @@ class _ChatScreenState extends State<ChatScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             isGenerating
-                ? yourChat(context, chatController.text)
-                : const CircleAvatar(),
+                ? Expanded(child: ListView(children: [chat(context, chatText)]))
+                : const SizedBox(),
             Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10),
@@ -74,10 +75,12 @@ class _ChatScreenState extends State<ChatScreen> {
                           iconSize: 30,
                           onPressed: () {
                             getGeminiResponse();
-                            // chatController.clear();
                             setState(() {
                               isGenerating = true;
+                              chatText = chatController.text;
                             });
+                            chatController.clear();
+                            FocusManager.instance.primaryFocus!.unfocus();
                           },
                           icon: isTextEmpty
                               ? const SizedBox()
@@ -91,7 +94,7 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  Widget yourChat(BuildContext context, String chatControllerText) {
+  Widget chat(BuildContext context, String chatControllerText) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10),
       child: Column(
