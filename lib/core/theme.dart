@@ -18,5 +18,6 @@ class CustomTheme {
           style: IconButton.styleFrom(
               foregroundColor: const Color.fromARGB(255, 211, 209, 209))),
       textTheme: const TextTheme(
-          bodySmall: TextStyle(color: Color.fromARGB(255, 201, 198, 198))));
+          bodySmall: TextStyle(color: Color.fromARGB(255, 201, 198, 198)),
+          bodyMedium: TextStyle(color: Color.fromARGB(255, 255, 255, 255))));
 }
