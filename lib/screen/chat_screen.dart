@@ -12,7 +12,7 @@ class _ChatScreenState extends State<ChatScreen> {
   final chatController = TextEditingController();
   String chatText = '';
   String geminiText = '';
-  bool isTextEmpty = false;
+  bool isTextEmpty = true;
   bool isGenerating = false;
 
   getGeminiResponse() async {
@@ -22,6 +22,26 @@ class _ChatScreenState extends State<ChatScreen> {
       geminiText = responseText;
     });
   }
+
+  chatControllerListen() {
+    chatController.addListener(() {
+      setState(() {
+        isTextEmpty = chatController.text.characters.isEmpty;
+        print(isTextEmpty);
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  // @override
+  // void initState() {
+  //   chatControllerListen();
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -60,13 +80,7 @@ class _ChatScreenState extends State<ChatScreen> {
                               hintStyle: Theme.of(context).textTheme.bodySmall,
                               contentPadding: const EdgeInsets.only(left: 10)),
                           onTap: () {
-                            chatController.addListener(() {
-                              setState(() {
-                                isTextEmpty =
-                                    chatController.text.characters.isEmpty;
-                                print(isTextEmpty);
-                              });
-                            });
+                            chatControllerListen();
                           },
                         ),
                       ),
@@ -139,7 +153,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   : Text(
                       geminiText,
                       style: Theme.of(context).textTheme.bodyMedium,
-                    ))
+                    )),
         ],
       ),
     );
