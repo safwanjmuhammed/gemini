@@ -9,13 +9,14 @@ class GeminiService {
   Future<String> getGemini(String chatText, BuildContext context) async {
     try {
       final geminiResponse = await gemini.generateFromText(chatText);
-      
+      print(geminiResponse.response.promptFeedback);
+
       print(geminiResponse.text);
       return geminiResponse.text;
     } on DioException catch (e) {
       print(e.message);
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to fetch gemini response..')));
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //     SnackBar(content: Text('Failed to fetch gemini response..')));
     }
     throw Exception('failed');
   }

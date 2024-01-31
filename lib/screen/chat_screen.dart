@@ -36,8 +36,10 @@ class _ChatScreenState extends State<ChatScreen> {
 
   addingchatToList(String chat) {
     List<String> chats = [];
-    chats.add(chat);
-    print(chats.length);
+    setState(() {
+      chats.addAll(chats);
+      print(chats.length);
+    });
   }
 
   @override
