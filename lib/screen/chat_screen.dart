@@ -16,6 +16,7 @@ class _ChatScreenState extends State<ChatScreen> {
   String geminiText = '';
   bool isTextEmpty = true;
   bool isGenerating = false;
+  int chatsnumber = 0;
 
   getGeminiResponse() async {
     final service = GeminiService();
@@ -34,25 +35,11 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
-  addingchatToList(String chat) {
-    List<String> chats = [];
-    setState(() {
-      chats.addAll(chats);
-      print(chats.length);
-    });
-  }
-
   @override
-  void dispose() {
-    super.dispose();
-    chatController.text;
+  void initState() {
+    chatControllerListen();
+    super.initState();
   }
-
-  // @override
-  // void initState() {
-  //   chatControllerListen();
-  //   super.initState();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +47,6 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       appBar: AppBar(
         forceMaterialTransparency: true,
-        // leading: Image.asset(''),
         actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.menu))],
       ),
       body: Container(
@@ -71,14 +57,13 @@ class _ChatScreenState extends State<ChatScreen> {
           children: [
             isGenerating
                 ? Expanded(
-                    child: ListView(children: [
-                    chat(
-                      context,
-                      geminiText,
-                      chatText,
-                      platformBrightness,
-                    )
-                  ]))
+                    child: ListView.builder(
+                        itemCount: chatsnumber,
+                        itemBuilder: ((context, index) {
+                          return chat(context, geminiText, chatText,
+                              platformBrightness);
+                        })),
+                  )
                 : const SizedBox(),
             Padding(
                 padding:
@@ -115,10 +100,11 @@ class _ChatScreenState extends State<ChatScreen> {
                             setState(() {
                               isGenerating = true;
                               chatText = chatController.text;
+                              chatsnumber++;
                             });
-                            addingchatToList(chatText);
-                            chatController.clear();
+
                             FocusManager.instance.primaryFocus!.unfocus();
+                            chatController.clear();
                           },
                           icon: isTextEmpty
                               ? const SizedBox()
