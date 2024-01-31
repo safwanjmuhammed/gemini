@@ -4,7 +4,11 @@ A new Flutter project.
 
 ## Getting Started
 
+Dark Mode
+
 ![DARK MODE](Screenshot_1706721627.png)
+
+Light Mode
 
 ![Alt text](Screenshot_1706721638.png)
 
