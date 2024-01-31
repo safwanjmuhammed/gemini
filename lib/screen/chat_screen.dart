@@ -16,7 +16,7 @@ class _ChatScreenState extends State<ChatScreen> {
   String geminiText = '';
   bool isTextEmpty = true;
   bool isGenerating = false;
-  int chatsnumber = 0;
+  int chatsNumber = 0;
 
   getGeminiResponse() async {
     final service = GeminiService();
@@ -58,7 +58,7 @@ class _ChatScreenState extends State<ChatScreen> {
             isGenerating
                 ? Expanded(
                     child: ListView.builder(
-                        itemCount: chatsnumber,
+                        itemCount: chatsNumber,
                         itemBuilder: ((context, index) {
                           return chat(context, geminiText, chatText,
                               platformBrightness);
@@ -100,7 +100,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             setState(() {
                               isGenerating = true;
                               chatText = chatController.text;
-                              chatsnumber++;
+                              chatsNumber++;
                             });
 
                             FocusManager.instance.primaryFocus!.unfocus();
