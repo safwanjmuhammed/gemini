@@ -4,7 +4,9 @@ A new Flutter project.
 
 ## Getting Started
 
-![Alt text](Screenshot_1706721627.png)
+![DARK MODE](Screenshot_1706721627.png)
+
+![Alt text](Screenshot_1706721638.png)
 
 
 
