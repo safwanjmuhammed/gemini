@@ -10,6 +10,7 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final chatController = TextEditingController();
+
   String chatText = '';
   String geminiText = '';
   bool isTextEmpty = true;
@@ -17,7 +18,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   getGeminiResponse() async {
     final service = GeminiService();
-    final responseText = await service.getGemini(chatController.text);
+    final responseText = await service.getGemini(chatController.text, context);
     setState(() {
       geminiText = responseText;
     });
@@ -32,9 +33,16 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
+  addingchatToList(String chat) {
+    List<String> chats = [];
+    chats.add(chat);
+    print(chats.length);
+  }
+
   @override
   void dispose() {
     super.dispose();
+    chatController.text;
   }
 
   // @override
@@ -45,8 +53,11 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final platformBrightness = MediaQuery.of(context).platformBrightness;
     return Scaffold(
       appBar: AppBar(
+        forceMaterialTransparency: true,
+        // leading: Image.asset(''),
         actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.menu))],
       ),
       body: Container(
@@ -56,12 +67,16 @@ class _ChatScreenState extends State<ChatScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             isGenerating
-                ? Expanded(child: ListView(children: [chat(context, chatText)]))
+                ? Expanded(
+                    child: ListView(children: [
+                    chat(context, chatText, platformBrightness)
+                  ]))
                 : const SizedBox(),
             Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10),
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                 child: Container(
+                  padding: const EdgeInsets.all(5),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(30),
                     color: Theme.of(context).cardColor,
@@ -93,6 +108,7 @@ class _ChatScreenState extends State<ChatScreen> {
                               isGenerating = true;
                               chatText = chatController.text;
                             });
+                            addingchatToList(chatText);
                             chatController.clear();
                             FocusManager.instance.primaryFocus!.unfocus();
                           },
@@ -108,16 +124,23 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  Widget chat(BuildContext context, String chatControllerText) {
+  Widget chat(BuildContext context, String chatControllerText,
+      Brightness platformBrightness) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const CircleAvatar(
-                child: Text('SA'),
+              CircleAvatar(
+                backgroundColor: Color(0XFF50577A),
+                child: Text(
+                  'SA',
+                  style: platformBrightness == Brightness.light
+                      ? const TextStyle(color: Colors.white)
+                      : Theme.of(context).textTheme.bodyMedium,
+                ),
               ),
               const SizedBox(width: 10),
               Text('YOU', style: Theme.of(context).textTheme.bodyMedium),
@@ -135,8 +158,14 @@ class _ChatScreenState extends State<ChatScreen> {
             padding: const EdgeInsets.only(top: 10),
             child: Row(
               children: [
-                const CircleAvatar(
-                  child: Text('G'),
+                CircleAvatar(
+                  backgroundColor: const Color(0XFF50577A),
+                  child: Text(
+                    'G',
+                    style: platformBrightness == Brightness.light
+                        ? const TextStyle(color: Colors.white)
+                        : Theme.of(context).textTheme.bodyMedium,
+                  ),
                 ),
                 const SizedBox(width: 10),
                 Text('GEMINI', style: Theme.of(context).textTheme.bodyMedium),
