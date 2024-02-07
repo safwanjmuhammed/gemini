@@ -16,9 +16,9 @@ class _ChatScreenState extends State<ChatScreen> {
   String geminiText = '';
   bool isTextEmpty = true;
   bool isGenerating = false;
-  int chatsNumber = 0;
+  List<Map<String, dynamic>> chatList = [];
 
-  getGeminiResponse() async {
+  void getGeminiResponse() async {
     final service = GeminiService();
     final responseText = await service.getGemini(chatController.text, context);
     setState(() {
@@ -26,7 +26,7 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
-  chatControllerListen() {
+  void chatControllerListen() {
     chatController.addListener(() {
       setState(() {
         isTextEmpty = chatController.text.characters.isEmpty;
@@ -35,10 +35,19 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
-  @override
-  void initState() {
-    chatControllerListen();
-    super.initState();
+  void addingChattoList(
+    String chatText,
+    String geminiText,
+  ) {
+    setState(() {
+      chatList.addAll([
+        {'chat': chatText, 'response': geminiText},
+      ]);
+    });
+
+    print(chatList.length);
+    print(chatList[0]['chat']);
+    ;
   }
 
   @override
@@ -49,7 +58,7 @@ class _ChatScreenState extends State<ChatScreen> {
         forceMaterialTransparency: true,
         actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.menu))],
       ),
-      body: Container(
+      body: SizedBox(
         height: double.infinity,
         width: double.infinity,
         child: Column(
@@ -58,10 +67,10 @@ class _ChatScreenState extends State<ChatScreen> {
             isGenerating
                 ? Expanded(
                     child: ListView.builder(
-                        itemCount: chatsNumber,
+                        itemCount: chatList.length,
                         itemBuilder: ((context, index) {
-                          return chat(context, geminiText, chatText,
-                              platformBrightness);
+                          return chat(context, chatList[index]['response'],
+                              chatList[index]['chat'], platformBrightness);
                         })),
                   )
                 : const SizedBox(),
@@ -97,10 +106,12 @@ class _ChatScreenState extends State<ChatScreen> {
                           iconSize: 30,
                           onPressed: () {
                             getGeminiResponse();
+
                             setState(() {
                               isGenerating = true;
                               chatText = chatController.text;
-                              chatsNumber++;
+                              print('chaaaaaaat$chatText');
+                              addingChattoList(chatText, geminiText);
                             });
 
                             FocusManager.instance.primaryFocus!.unfocus();
