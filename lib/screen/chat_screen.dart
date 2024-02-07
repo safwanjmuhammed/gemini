@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gemini/components/chat_widget.dart';
 import 'package:gemini/services/gemini_service.dart';
@@ -12,13 +13,14 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final chatController = TextEditingController();
 
+
   String chatText = '';
   String geminiText = '';
   bool isTextEmpty = true;
   bool isGenerating = false;
   List<Map<String, dynamic>> chatList = [];
 
-  void getGeminiResponse() async {
+  Future<void> getGeminiResponse() async {
     final service = GeminiService();
     final responseText = await service.getGemini(chatController.text, context);
     setState(() {
@@ -53,6 +55,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     final platformBrightness = MediaQuery.of(context).platformBrightness;
+
     return Scaffold(
       appBar: AppBar(
         forceMaterialTransparency: true,
@@ -67,6 +70,8 @@ class _ChatScreenState extends State<ChatScreen> {
             isGenerating
                 ? Expanded(
                     child: ListView.builder(
+
+                        physics: ScrollPhysics(),
                         itemCount: chatList.length,
                         itemBuilder: ((context, index) {
                           return chat(context, chatList[index]['response'],
@@ -104,16 +109,16 @@ class _ChatScreenState extends State<ChatScreen> {
                       IconButton(
                           style: Theme.of(context).iconButtonTheme.style,
                           iconSize: 30,
-                          onPressed: () {
-                            getGeminiResponse();
-
+                          onPressed: () async {
+                            await getGeminiResponse();
                             setState(() {
                               isGenerating = true;
                               chatText = chatController.text;
-                              print('chaaaaaaat$chatText');
+                              if (kDebugMode) {
+                                print('chaaaaaaat$chatText');
+                              }
                               addingChattoList(chatText, geminiText);
                             });
-
                             FocusManager.instance.primaryFocus!.unfocus();
                             chatController.clear();
                           },
