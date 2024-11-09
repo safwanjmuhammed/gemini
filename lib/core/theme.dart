@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 class CustomTheme {
   static ThemeData lightTheme = ThemeData(
       scaffoldBackgroundColor: const Color(0XFFFAFAFA),
+      progressIndicatorTheme: const ProgressIndicatorThemeData(
+          color: Color.fromARGB(255, 201, 198, 198)),
       cardColor: const Color(0XFFD2D3DB),
       appBarTheme:
           const AppBarTheme(backgroundColor: Colors.transparent, elevation: 0),
@@ -17,6 +19,8 @@ class CustomTheme {
 
   static ThemeData darkTheme = ThemeData(
       scaffoldBackgroundColor: const Color(0xFF404258),
+      progressIndicatorTheme: const ProgressIndicatorThemeData(
+          color: Color.fromARGB(255, 201, 198, 198)),
       cardColor: const Color(0xFF50577A),
       appBarTheme: const AppBarTheme(color: Color(0xFF404258)),
       iconButtonTheme: IconButtonThemeData(

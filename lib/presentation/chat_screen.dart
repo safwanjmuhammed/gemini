@@ -1,16 +1,18 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gemini/components/chat_widget.dart';
-import 'package:gemini/services/gemini_service.dart';
+import 'package:gemini/presentation/gemini_state.dart';
+import 'package:gemini/provider/gemini_provider.dart';
 
-class ChatScreen extends StatefulWidget {
+class ChatScreen extends ConsumerStatefulWidget {
   const ChatScreen({super.key});
 
   @override
-  State<ChatScreen> createState() => _ChatScreenState();
+  ConsumerState<ChatScreen> createState() => _ChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class _ChatScreenState extends ConsumerState<ChatScreen> {
   final chatController = TextEditingController();
 
   String chatText = '';
@@ -18,23 +20,10 @@ class _ChatScreenState extends State<ChatScreen> {
   bool isTextEmpty = true;
   bool isGenerating = false;
 
-  List<Map<String, dynamic>> chatList = [];
+  GeminiState get state => ref.watch(provider);
+  GeminiNotifier get notifier => ref.read(provider.notifier);
   final _scrollController = ScrollController();
-
-  Future<String?> getGeminiResponse() async {
-    final service = GeminiService();
-    try {
-      final responseText =
-          await service.geminiService(context: context, chatText: chatText);
-      return responseText;
-    } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Something went wrong')));
-    }
-    return null;
-  }
-
-  void chatControllerListen() {
+  void chatControllerListener() {
     chatController.addListener(() {
       setState(() {
         isTextEmpty = chatController.text.characters.isEmpty;
@@ -42,18 +31,9 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
-  void addChatToList(
-    String chatText,
-    String geminiText,
-  ) {
-    chatList.addAll([
-      {'chat': chatText, 'response': geminiText},
-    ]);
-  }
-
   @override
   Widget build(BuildContext context) {
-    final platformBrightness = MediaQuery.platformBrightnessOf(context);
+    final platformBrightness = MediaQuery.of(context).platformBrightness;
 
     return Scaffold(
       appBar: AppBar(
@@ -63,14 +43,14 @@ class _ChatScreenState extends State<ChatScreen> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          isGenerating
+          state.chatData.isNotEmpty
               ? Expanded(
                   child: ListView.builder(
                       controller: _scrollController,
-                      itemCount: chatList.length,
+                      itemCount: state.chatData.length,
                       itemBuilder: ((context, index) {
-                        return chat(context, chatList[index]['response'],
-                            chatList[index]['chat'], platformBrightness);
+                        return chat(context, state.chatData[index]['response'],
+                            state.chatData[index]['chat'], platformBrightness);
                       })),
                 )
               : const SizedBox(),
@@ -96,7 +76,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             hintStyle: Theme.of(context).textTheme.bodySmall,
                             contentPadding: const EdgeInsets.only(left: 10)),
                         onTap: () {
-                          chatControllerListen();
+                          chatControllerListener();
                         },
                       ),
                     ),
@@ -104,22 +84,26 @@ class _ChatScreenState extends State<ChatScreen> {
                         style: Theme.of(context).iconButtonTheme.style,
                         iconSize: 30,
                         onPressed: () async {
-                          setState(() {
-                            isGenerating = true;
-                          });
-                          chatText = chatController.text;
-                          final geminiText = await getGeminiResponse();
-                          if (geminiText == null || geminiText.isEmpty) return;
-                          setState(() {
-                            addChatToList(chatText, geminiText);
+                          try {
+                            chatText = chatController.text;
+                            await notifier.fetchGeminiResponse(
+                                context: context, chatText: chatText);
                             _scrollToItem(controller: _scrollController);
-                          });
+                          } catch (e) {
+                            if (kDebugMode) {
+                              print(e);
+                            }
+                          }
                           FocusManager.instance.primaryFocus!.unfocus();
                           chatController.clear();
                         },
                         icon: isTextEmpty
                             ? const SizedBox()
-                            : const Icon(Icons.arrow_circle_right_outlined))
+                            : state.isLoading == true
+                                ? Transform.scale(
+                                    scale: 0.5,
+                                    child: const CircularProgressIndicator())
+                                : const Icon(Icons.arrow_circle_right_outlined))
                   ],
                 ),
               ))
@@ -131,7 +115,9 @@ class _ChatScreenState extends State<ChatScreen> {
 
 void _scrollToItem({required ScrollController controller}) {
   final scrollPosition = controller.position.maxScrollExtent;
-  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-    controller.jumpTo(scrollPosition);
+  Future.delayed(const Duration(milliseconds: 100), () {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      controller.jumpTo(scrollPosition);
+    });
   });
 }
