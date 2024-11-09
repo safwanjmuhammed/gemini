@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Gemini',
       themeMode: ThemeMode.system,
-      theme: CustomTheme.lightTheme,
+      theme: CustomTheme.darkTheme,
       darkTheme: CustomTheme.darkTheme,
       home: const ChatScreen(),
     );

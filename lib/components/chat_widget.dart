@@ -10,7 +10,7 @@ Widget chat(BuildContext context, String geminiText, String chatControllerText,
         Row(
           children: [
             CircleAvatar(
-              backgroundColor: Color(0XFF50577A),
+              backgroundColor: const Color(0XFF50577A),
               child: Text(
                 'SA',
                 style: platformBrightness == Brightness.light
@@ -49,16 +49,17 @@ Widget chat(BuildContext context, String geminiText, String chatControllerText,
           ),
         ),
         Padding(
-            padding: const EdgeInsets.only(left: 50),
-            child: geminiText.isEmpty
-                ? Text(
-                    'Generating.....',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  )
-                : Text(
-                    geminiText,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  )),
+          padding: const EdgeInsets.only(left: 50),
+          child: geminiText.isEmpty
+              ? Text(
+                  'Generating.....',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                )
+              : Text(
+                  geminiText,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+        ),
       ],
     ),
   );
