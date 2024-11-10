@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gemini/presentation/gemini_state.dart';
-import 'package:gemini/services/gemini_service.dart';
+import 'package:gemini/feature/chat/presentation/gemini_state.dart';
+import 'package:gemini/feature/chat/services/gemini_service.dart';
 
 final provider = StateNotifierProvider<GeminiNotifier, GeminiState>(
     (ref) => GeminiNotifier(GeminiState(chatData: [])));

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gemini/core/config/keys.dart';
+import 'package:gemini/feature/chat/core/config/keys.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 
 class GeminiService {

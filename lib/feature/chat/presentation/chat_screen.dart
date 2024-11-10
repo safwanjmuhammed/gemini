@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gemini/components/chat_widget.dart';
-import 'package:gemini/presentation/gemini_state.dart';
-import 'package:gemini/provider/gemini_provider.dart';
+import 'package:gemini/feature/chat/components/chat_widget.dart';
+import 'package:gemini/feature/chat/presentation/gemini_state.dart';
+import 'package:gemini/feature/chat/provider/gemini_provider.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
   const ChatScreen({super.key});
@@ -20,8 +20,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   bool isTextEmpty = true;
   bool isGenerating = false;
 
-  GeminiState get state => ref.watch(provider);
-  GeminiNotifier get notifier => ref.read(provider.notifier);
   final _scrollController = ScrollController();
   void chatControllerListener() {
     chatController.addListener(() {
@@ -30,6 +28,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       });
     });
   }
+
+  GeminiState get state => ref.watch(provider);
+  GeminiNotifier get notifier => ref.read(provider.notifier);
 
   @override
   Widget build(BuildContext context) {

@@ -18,6 +18,10 @@ class CustomTheme {
       ));
 
   static ThemeData darkTheme = ThemeData(
+      elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+        backgroundColor: const Color.fromARGB(255, 62, 67, 96),
+      )),
       scaffoldBackgroundColor: const Color(0xFF404258),
       progressIndicatorTheme: const ProgressIndicatorThemeData(
           color: Color.fromARGB(255, 201, 198, 198)),
